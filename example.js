@@ -1,12 +1,5 @@
-const Nightmare = require('nightmare');
-let nightmare = Nightmare({ show: false });
 let wikipedia_scraping = require('./wikipediaScraping');
-
-let url_string = 'https://en.wikipedia.org/wiki/List_of_UFC_events';
-let base_url = 'https://en.wikipedia.org';
-
-let fightResults = {}; 
-
+const pool = require('./postgres').pool;
 
 let fightDetailsPromise = wikipedia_scraping.getFightDetails().then(function(value) {
 
@@ -14,6 +7,16 @@ let fightDetailsPromise = wikipedia_scraping.getFightDetails().then(function(val
 
     let a = wikipedia_scraping.visitFightPages(0, value).then(function(value) {
 
-        return value;
+        console.log(value);
+
+        //const client = await pool.connect()
+
+        //client.query(addLesMills);
+
+        //const addStudio41Camera = 'CREATE TABLE UFCevents (ID BIGSERIAL PRIMARY KEY, name varchar(40),' + 
+          //  'date varchar(30), accesscode varchar(30), contact varchar(30))';
+        //client.query(addStudio41Camera);
+
+        //client.release();
   });
 });

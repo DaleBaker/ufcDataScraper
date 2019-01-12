@@ -16,36 +16,43 @@ function visitFightPages(i, list_of_UFC_events) {
 	    console.log(full_url_string);
 	    nightmare
 	      .goto(full_url_string)
-	      .wait(400)
 	      .evaluate(function() {
-	        var rawResults = []
+	      	let eventData = {};
+	        var rawResults = [];
+			eventData["eventDate"] = "jere";
+	        eventData["eventName"] = $("#firstHeading").text();
 	        $(".toccolours tr").each(function() {
-	          console.log($(this))
-	          rawResults.push($(this).text().replace('Women\\\'s','Women\'s').replace('\n','').replace(/\n\n/g,',').replace('\n',''))
-	        })
-	        return rawResults
+	        	let row = $(this).text().replace('\n','').replace(/\n\n/g,',').replace('\n','').split(",");
+	        	if (!(row.length === 1) && !(row[0] === "Weight class")) {
+	            	rawResults.push(row);
+	          	}
+	        });
+	       	$(".infobox tr").each(function() {
+	        	let row = $(this).text();
+	        	if ((row.substring(0, 4) === "Date")) {
+	            	eventData["eventDate"] = $(this).text().replace('Date','');
+	          	}
+	        });
+	        eventData["fightResults"] = rawResults;
+
+	        return eventData;
 	      })
 	      .end()
 	      .then(function (result) {
-	        let cardResults = [];
-	        for (let i = 0; i < result.length ; i++) {
-	          let parsed = result[i].split(',');
-	          if (!(parsed.length === 1) && !(parsed[0] === "Weight class")) {
-	            cardResults.push(parsed);
-	          }
-	        }
-	        fightResults[list_of_UFC_events[i]] = cardResults;
+
+	        fightResults[list_of_UFC_events[i]] = result;
+
+		    if (i < NUMBER_OF_FIGHTS) {
+		      iterationMethod(i + 1, list_of_UFC_events);
+		    } else {
+		    	console.log('fight results are being resolved');
+		    	resolve(fightResults);
+		    }
 	      })
 	      .catch(error => {
 	        console.error('Search failed:', error)
 	      });
 
-	    if (i < NUMBER_OF_FIGHTS) {
-	      iterationMethod(i + 1, list_of_UFC_events);
-	    } else {
-	    	console.log('fight results are being resolved');
-	    	resolve(fightResults);
-	    }
 	}, 900);
   }
   iterationMethod(i, list_of_UFC_events);
