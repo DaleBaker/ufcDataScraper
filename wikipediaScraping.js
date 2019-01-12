@@ -1,9 +1,10 @@
 const Nightmare = require('nightmare');
+const Fight = require('./Fight');
 
 let fightResults = {};
 let url_string = 'https://en.wikipedia.org/wiki/List_of_UFC_events';
 let base_url = 'https://en.wikipedia.org';
-const NUMBER_OF_FIGHTS = 10;
+const NUMBER_OF_FIGHTS = 100;
 
 
 function visitFightPages(i, list_of_UFC_events) {
@@ -16,10 +17,10 @@ function visitFightPages(i, list_of_UFC_events) {
 	    console.log(full_url_string);
 	    nightmare
 	      .goto(full_url_string)
+	      .wait(100)
 	      .evaluate(function() {
 	      	let eventData = {};
 	        var rawResults = [];
-			eventData["eventDate"] = "jere";
 	        eventData["eventName"] = $("#firstHeading").text();
 	        $(".toccolours tr").each(function() {
 	        	let row = $(this).text().replace('\n','').replace(/\n\n/g,',').replace('\n','').split(",");
@@ -40,6 +41,9 @@ function visitFightPages(i, list_of_UFC_events) {
 	      .end()
 	      .then(function (result) {
 
+	      	for (let fight in result["fightResults"]) {
+	        	result["fightResults"][fight] = new Fight(result["fightResults"][fight], result["eventName"], result["eventDate"]);
+	        }
 	        fightResults[list_of_UFC_events[i]] = result;
 
 		    if (i < NUMBER_OF_FIGHTS) {
@@ -53,7 +57,7 @@ function visitFightPages(i, list_of_UFC_events) {
 	        console.error('Search failed:', error)
 	      });
 
-	}, 900);
+	}, 500);
   }
   iterationMethod(i, list_of_UFC_events);
   });
@@ -68,9 +72,13 @@ function getFightDetails() {
 				.goto(url_string)
 				.wait(300)
 				.evaluate(function() {
-					var List_of_UFC_events = []
+					var List_of_UFC_events = [];
 					$("#Past_events tr td:nth-child(2)").each(function() {
-					  List_of_UFC_events.push($(this).children().attr("href"));
+						if ($(this).children().attr("href") != null) {
+							List_of_UFC_events.push($(this).children().attr("href"));
+						} else {
+							List_of_UFC_events.push($(this).children().eq(0).children().attr("href"));
+						}
 					})  
 					return List_of_UFC_events
 				})
