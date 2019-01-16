@@ -17,7 +17,6 @@ let fightDetailsPromise = wikipedia_scraping.getFightDetails().then(function(val
             const createTable = 'CREATE TABLE fights (ID BIGSERIAL PRIMARY KEY, division varchar(30), fighter1 varchar(40),' + 
                 'fighter2 varchar(40), event varchar(40), outcome varchar(40), winner varchar(40), date varchar(30))';
             client.query(createTable);
-                    console.log("here's a fight:");
 
             for (let event in fightData) {
                 console.log(fightData[event]);
