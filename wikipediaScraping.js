@@ -4,7 +4,7 @@ const Fight = require('./Fight');
 let fightResults = {};
 let url_string = 'https://en.wikipedia.org/wiki/List_of_UFC_events';
 let base_url = 'https://en.wikipedia.org';
-const NUMBER_OF_FIGHTS = 5;
+const NUMBER_OF_FIGHTS = 100;
 
 
 function visitFightPages(i, list_of_UFC_events) {

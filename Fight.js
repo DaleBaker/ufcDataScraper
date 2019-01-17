@@ -1,6 +1,11 @@
 class Fight {
 	constructor(fightData, event, date) {
-		this.division = fightData[0].replace("'","");
+
+		for (let i in fightData) {
+			fightData[i] = fightData[i].replace("'","");
+		}
+
+		this.division = fightData[0];
 		if (fightData.length == 10) {
 			this.outcome = fightData[4] + fightData[5] + fightData[6];
 		} else {
